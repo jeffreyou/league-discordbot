@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import discord
 from discord.ext import commands
 import firebase_admin
@@ -31,4 +34,6 @@ async def on_ready():
     print(f"Bot logged in as {bot.user}")
 
 # Run the bot
-bot.run("MTM3OTY1MTI2NTE2ODAxNTQ4MQ.Gn_15W.ihSHysBhByyNLN4082-agYUac9Wq6YrSHHR0k0")
+import os
+bot.run(os.getenv("DISCORD_TOKEN"))  # avoid leaking discord token
+
