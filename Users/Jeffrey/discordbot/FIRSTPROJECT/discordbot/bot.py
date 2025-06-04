@@ -7,7 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # Initialize Firebase
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate("C:/Users/Jeffrey/discordbot/FIRSTPROJECT/discordbot/serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -27,6 +27,20 @@ async def register(interaction: discord.Interaction, riot_id: str):
     })
 
     await interaction.response.send_message(f"✅ Riot ID '{riot_id}' has been registered to your account.", ephemeral=True)
+
+# /getriotid implementation, simply returns associated riot id if provided
+@bot.tree.command(name="getriotid", description="Display the currently linked Riot ID to your Discord account")
+async def getriotid(interaction: discord.Interaction):
+    # access firebase database for corresponding id
+    user_id = str(interaction.user.id)
+    user_ref = db.collection("users").document(user_id) # userid may not exist
+    user_contents = user_ref.get()
+
+    if user_contents.exists:  # checks if existing 
+        await interaction.response.send_message(f"Riot ID: {user_contents.to_dict()['riot_id']}, Associated Discord account: {user_contents.to_dict()['username']}", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"Your Riot ID is not registered! Please use the command /register [riot_id] example: /register krysa#0919")
+
 
 @bot.event
 async def on_ready():
